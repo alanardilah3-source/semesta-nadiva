@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>juhuhudhuhhhfhhfh 💖</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Sacramento&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* --- Layar Opening --- */
+        #opening-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(26, 0, 51, 0.6) 0%, rgba(0, 0, 0, 0.9) 100%);
+            backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transition: opacity 1.5s ease-in-out, visibility 1.5s;
+        }
+
+        .envelope-container {
+            position: relative;
+            cursor: pointer;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .envelope {
+            font-size: 6rem;
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+        }
+
+        .sparkle-icon {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: twinkle 1.5s infinite alternate;
+        }
+        .sp-1 { top: -10px; right: -10px; }
+        .sp-2 { bottom: 10px; left: -20px; animation-delay: 0.5s; }
+
+        #opening-screen h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            letter-spacing: 3px;
+            background: linear-gradient(45deg, #ff69b4, #00ffff, #ff1493);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 0 20px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+
+        #startBtn {
+            padding: 15px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #ff69b4, #00ffff) 1;
+            color: #fff;
+            font-size: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), 0 0 20px rgba(255, 105, 180, 0.2) inset;
+        }
+
+        #startBtn:hover {
+            background: linear-gradient(45deg, rgba(255, 105, 180, 0.4), rgba(0, 255, 255, 0.4));
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.5), 0 0 40px rgba(255, 105, 180, 0.5) inset;
+        }
+
+        /* --- Teks Overlay --- */
+        #main-text {
+            position: absolute;
+            bottom: 5%;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0; 
+            transition: opacity 4s ease-in-out;
+        }
+
+        #main-text h1 {
+            font-family: 'Sacramento', cursive;
+            font-size: 5rem;
+            margin: 0;
+            color: #fff;
+            text-shadow: 0 0 10px #ff1493, 0 0 20px #ff00ff, 0 0 30px #00ffff, 0 0 50px #ff69b4;
+            animation: pulse-text 3s infinite alternate;
+        }
+
+        #main-text p {
+            font-size: 1.1rem;
+            letter-spacing: 5px;
+            margin-top: 0;
+            color: #e0ffff;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #ff69b4;
+            font-weight: 300;
+        }
+
+        /* --- Teks Melayang Saat Diklik --- */
+        .floating-text {
+            position: absolute;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #ff1493, 0 0 30px #ff00ff;
+            pointer-events: none;
+            z-index: 50;
+            animation: floatUp 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            font-size: 1.2rem;
+        }
+
+        /* --- Music Controls --- */
+        #music-control {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            display: none; 
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
+        }
+
+        #music-control:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes pulse-text {
+            0% { text-shadow: 0 0 10px #ff1493, 0 0 20px #ff00ff, 0 0 30px #00ffff; transform: scale(1); }
+            100% { text-shadow: 0 0 20px #ff1493, 0 0 40px #ff00ff, 0 0 60px #00ffff, 0 0 80px #fff; transform: scale(1.03); }
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(0.5); }
+            20% { transform: translateY(-20px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            #main-text h1 { font-size: 3.5rem; }
+            #main-text p { font-size: 0.8rem; letter-spacing: 3px; }
+            #opening-screen h2 { font-size: 1.5rem; }
+            .envelope { font-size: 4rem; }
+        }
+    </style>
+    <!-- Three.js + Addons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <audio id="bgm" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/16/audio_b2878411b0.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="music-control">🎵 Music: ON</div>
+
+    <!-- Layar Pembuka -->
+    <div id="opening-screen">
+        <div class="envelope-container" id="env-icon">
+            <span class="sparkle-icon sp-1">✨</span>
+            <div class="envelope">💌</div>
+            <span class="sparkle-icon sp-2">✨</span>
+        </div>
+        <h2>Semesta Cinta Nadiva Ghelby</h2>
+        <button id="startBtn">Mulai Perjalanan</button>
+    </div>
+
+    <!-- Teks Utama -->
+    <div id="main-text">
+        <h1>Nadiva Ghelby</h1>
+        <p>And if loving you is hell, then let me keep burning. 🌌</p>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script>
+        // --- Setup Three.js Core ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x05001a, 0.008);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 10, 600); 
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+        container.appendChild(renderer.domElement);
+
+        // --- Texture Generator ---
+        function createGlowTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32; canvas.height = 32;
+            const context = canvas.getContext('2d');
+            const gradient = context.createRadialGradient(16, 16, 0, 16, 16, 16);
+            gradient.addColorStop(0, 'rgba(255,255,255,1)');
+            gradient.addColorStop(0.2, 'rgba(255,255,255,0.8)');
+            gradient.addColorStop(0.5, 'rgba(255,255,255,0.2)');
+            gradient.addColorStop(1, 'rgba(0,0,0,0)');
+            context.fillStyle = gradient;
+            context.fillRect(0, 0, 32, 32);
+            return new THREE.CanvasTexture(canvas);
+        }
+        const particleTexture = createGlowTexture();
+
+        // --- 1. GALAKSI MULTICOLOR ---
+        const galaxyGeometry = new THREE.BufferGeometry();
+        const galaxyCount = 35000;
+        const galPositions = new Float32Array(galaxyCount * 3);
+        const galColors = new Float32Array(galaxyCount * 3);
+        const galSizes = new Float32Array(galaxyCount);
+
+        const innerColor = new THREE.Color('#ffffff'); 
+
+        for (let i = 0; i < galaxyCount; i++) {
+            const r = Math.pow(Math.random(), 2.5) * 25; 
+            const branches = 5; 
+            const branchAngle = ((i % branches) / branches) * Math.PI * 2;
+            const spinAngle = r * 0.4; 
+
+            const randomX = Math.pow(Math.random() - 0.5, 3) * (r * 0.5 + 2);
+            const randomY = Math.pow(Math.random() - 0.5, 3) * (r * 0.3 + 1);
+            const randomZ = Math.pow(Math.random() - 0.5, 3) * (r * 0.5 + 2);
+
+            const x = Math.cos(branchAngle + spinAngle) * r + randomX;
+            const z = Math.sin(branchAngle + spinAngle) * r + randomZ;
+            const y = (Math.random() - 0.5) * (20 - r) * 0.15 + randomY - 10; 
+
+            galPositions[i * 3] = x;
+            galPositions[i * 3 + 1] = y;
+            galPositions[i * 3 + 2] = z;
+
+            const color = new THREE.Color();
+            const hue = (branchAngle / (Math.PI * 2)) + (r / 30) - (Math.random() * 0.1);
+            const saturation = 0.8 + Math.random() * 0.2;
+            let lightness = 0.5 + Math.random() * 0.3;
+            
+            if (r < 3) lightness = 0.8 + Math.random() * 0.2;
+
+            color.setHSL(hue % 1, saturation, lightness);
+            if(r < 5) color.lerp(innerColor, 1 - (r/5));
+
+            galColors[i * 3] = color.r;
+            galColors[i * 3 + 1] = color.g;
+            galColors[i * 3 + 2] = color.b;
+
+            galSizes[i] = Math.random() * 0.8 + 0.1;
+        }
+
+        galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(galPositions, 3));
+        galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(galColors, 3));
+        galaxyGeometry.setAttribute('size', new THREE.BufferAttribute(galSizes, 1));
+
+        const galaxyMaterial = new THREE.PointsMaterial({
+            size: 0.3, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, map: particleTexture, opacity: 0.9
+        });
+        const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
+        scene.add(galaxy);
+
+        // --- 2. NEBULA CLOUDS ---
+        function createNebulaTexture(colorHex) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128; canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createRadialGradient(64,64,0, 64,64,64);
+            gradient.addColorStop(0, `${colorHex}ff`); 
+            gradient.addColorStop(0.4, `${colorHex}66`); 
+            gradient.addColorStop(1, `${colorHex}00`); 
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0,0,128,128);
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        const nebulaColors = ['#ff0080', '#00e5ff', '#aa00ff', '#0000ff'];
+        const nebulaGroup = new THREE.Group();
+        for(let i=0; i<20; i++) {
+            const col = nebulaColors[Math.floor(Math.random() * nebulaColors.length)];
+            const nebTex = createNebulaTexture(col);
+            const nebMat = new THREE.SpriteMaterial({ map: nebTex, transparent: true, blending: THREE.AdditiveBlending, opacity: 0.3 });
+            const sprite = new THREE.Sprite(nebMat);
+            
+            const r = 10 + Math.random() * 20;
+            const theta = Math.random() * Math.PI * 2;
+            sprite.position.set(Math.cos(theta)*r, -10 + (Math.random()-0.5)*5, Math.sin(theta)*r);
+            sprite.scale.set(15 + Math.random()*15, 15 + Math.random()*15, 1);
+            nebulaGroup.add(sprite);
+        }
+        scene.add(nebulaGroup);
+
+        // --- 3. PARTIKEL HATI 3D ---
+        const heartGeometry = new THREE.BufferGeometry();
+        const heartCount = 8000;
+        const heartPositions = new Float32Array(heartCount * 3);
+        const heartColors = new Float32Array(heartCount * 3);
+
+        for (let i = 0; i < heartCount; i++) {
+            const t = Math.PI * 2 * Math.random();
+            const scale = 0.55;
+            let hx = 16 * Math.pow(Math.sin(t), 3) * scale;
+            let hy = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * scale;
+
+            const spreadX = (Math.random() - 0.5) * 2;
+            const spreadY = (Math.random() - 0.5) * 2;
+            const spreadZ = (Math.random() - 0.5) * 4;
+
+            heartPositions[i * 3] = hx + spreadX;
+            heartPositions[i * 3 + 1] = hy + spreadY + 6;
+            heartPositions[i * 3 + 2] = spreadZ;
+
+            const pColor = new THREE.Color();
+            pColor.setHSL(0.85 + (Math.random() * 0.15), 1.0, 0.6 + Math.random()*0.3); 
+            if(Math.random() > 0.8) pColor.setHex(0x00ffff); 
+
+            heartColors[i * 3] = pColor.r;
+            heartColors[i * 3 + 1] = pColor.g;
+            heartColors[i * 3 + 2] = pColor.b;
+        }
+
+        heartGeometry.setAttribute('position', new THREE.BufferAttribute(heartPositions, 3));
+        heartGeometry.setAttribute('color', new THREE.BufferAttribute(heartColors, 3));
+
+        const heartMaterial = new THREE.PointsMaterial({
+            size: 0.25, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, map: particleTexture
+        });
+        const heart = new THREE.Points(heartGeometry, heartMaterial);
+        scene.add(heart);
+
+        // --- 4. BINTANG LATAR (DUST / STATIC STARS) ---
+        const dustGeometry = new THREE.BufferGeometry();
+        const dustCount = 2000;
+        const dustPos = new Float32Array(dustCount * 3);
+        const dustCol = new Float32Array(dustCount * 3);
+        for(let i=0; i<dustCount; i++) {
+            dustPos[i*3] = (Math.random() - 0.5) * 300;
+            dustPos[i*3+1] = (Math.random() - 0.5) * 300;
+            dustPos[i*3+2] = (Math.random() - 0.5) * 800 + 200;
+
+            const c = new THREE.Color().setHSL(Math.random(), 0.5, 0.8); 
+            dustCol[i*3] = c.r; dustCol[i*3+1] = c.g; dustCol[i*3+2] = c.b;
+        }
+        dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+        dustGeometry.setAttribute('color', new THREE.BufferAttribute(dustCol, 3));
+        const dustMaterial = new THREE.PointsMaterial({ size: 0.4, vertexColors: true, transparent: true, opacity: 0.8, map: particleTexture, blending: THREE.AdditiveBlending, depthWrite: false });
+        const dust = new THREE.Points(dustGeometry, dustMaterial);
+        scene.add(dust);
+
+        // --- 5. EFEK WARP (BINTANG MELESAT KE KAMERA) ---
+        const warpGeo = new THREE.BufferGeometry();
+        const warpCount = 1500;
+        const warpPos = new Float32Array(warpCount * 6); 
+        for(let i=0; i<warpCount; i++) {
+            const x = (Math.random() - 0.5) * 300;
+            const y = (Math.random() - 0.5) * 300;
+            const z = (Math.random() - 0.5) * 1000;
+            warpPos[i*6] = x; warpPos[i*6+1] = y; warpPos[i*6+2] = z; 
+            warpPos[i*6+3] = x; warpPos[i*6+4] = y; warpPos[i*6+5] = z; 
+        }
+        warpGeo.setAttribute('position', new THREE.BufferAttribute(warpPos, 3));
+        const warpMat = new THREE.LineBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0 });
+        const warpLines = new THREE.LineSegments(warpGeo, warpMat);
+        scene.add(warpLines);
+
+        // --- 6. EMOJI PLANET ---
+        function createTextSprite(text) {
+            const c = document.createElement('canvas');
+            c.width = 128; c.height = 128;
+            const ctx = c.getContext('2d');
+            
+            const grad = ctx.createLinearGradient(0,0,128,128);
+            grad.addColorStop(0, 'rgba(0, 255, 255, 0.4)');
+            grad.addColorStop(1, 'rgba(255, 105, 180, 0.4)');
+            
+            ctx.beginPath();
+            ctx.arc(64, 64, 55, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.3)'; 
+            ctx.fill();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = grad;
+            ctx.stroke();
+
+            ctx.font = '60px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'white';
+            ctx.fillText(text, 64, 70); 
+
+            const tex = new THREE.CanvasTexture(c);
+            return new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+        }
+
+        const emojis = ['👑', '🌸', '✨', '🍓', '🧸', '💖', '🦋', '🎶', '🎉', '🐱‍👤', '💋', '🌹', '🐱‍🏍', '🐱‍🐉'];
+        const orbiters = [];
+        const orbitGroup = new THREE.Group();
+        scene.add(orbitGroup);
+
+        emojis.forEach((em, index) => {
+            const sprite = createTextSprite(em);
+            const angle = (index / emojis.length) * Math.PI * 2;
+            const radius = 13 + Math.random() * 6; 
+            
+            sprite.position.set(Math.cos(angle) * radius, -9 + (Math.random() - 0.5) * 5, Math.sin(angle) * radius);
+            sprite.scale.set(2.5, 2.5, 2.5);
+            
+            orbiters.push({ obj: sprite, angle: angle, radius: radius, speed: 0.003 + Math.random() * 0.004, bobSpeed: 1 + Math.random() });
+            orbitGroup.add(sprite);
+        });
+
+        // --- 7. HUJAN METEOR ---
+        const meteors = [];
+        for(let i=0; i<5; i++) {
+            const mGeo = new THREE.BufferGeometry();
+            mGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,0,0, 0,0,0]), 3));
+            const mMat = new THREE.LineBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.8 });
+            const mLine = new THREE.Line(mGeo, mMat);
+            scene.add(mLine);
+            meteors.push({ obj: mLine, active: false, progress: 0, start: new THREE.Vector3(), end: new THREE.Vector3() });
+        }
+
+
+        // --- INTERAKSI KLIK & MOUSE ---
+        let phase = 'idle'; // idle -> warping -> arrived
+        let warpSpeed = 0;
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - windowHalfX); mouseY = (e.clientY - windowHalfY);
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                mouseX = (e.touches[0].clientX - windowHalfX); mouseY = (e.touches[0].clientY - windowHalfY);
+            }
+        });
+
+        const romaticMessages = [
+            "You are my universe 🌌", "I Love You 💖", "Nadiva Cantik ✨", 
+            "My Everything 🪐", "Selalu Sama Alan Ya 🥺", "Geulis Pisan 🦋",
+            "Sayang Nadiva 💕", "Cintaku 🍓", "Hanya Untukmu 👑",
+            "LOVE YOU💕",
+            "LOVE YOU💕",
+            "LOVE YOU💕",
+            "LOVE YOU💕",
+            "LOVE YOU💕"
+        ];
+
+        // PERBAIKAN LOGIKA KLIK DI SINI
+        document.addEventListener('click', (e) => {
+            // Jangan memunculkan teks jika Phase belum 'arrived' atau jika mengklik tombol musik
+            if(phase !== 'arrived' || e.target.id === 'music-control') return;
+            
+            const textEl = document.createElement('div');
+            textEl.className = 'floating-text';
+            textEl.innerText = romaticMessages[Math.floor(Math.random() * romaticMessages.length)];
+            textEl.style.left = `${e.clientX}px`;
+            textEl.style.top = `${e.clientY}px`;
+            
+            const colors = ['#00ffff', '#ff1493', '#ffaa00', '#aa00ff'];
+            const randCol = colors[Math.floor(Math.random() * colors.length)];
+            textEl.style.textShadow = `0 0 10px ${randCol}, 0 0 20px ${randCol}`;
+
+            document.body.appendChild(textEl);
+            
+            setTimeout(() => textEl.remove(), 2500);
+        });
+
+        // --- ANIMASI & RENDER LOOP ---
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            galaxy.rotation.y = elapsedTime * -0.04;
+            nebulaGroup.rotation.y = elapsedTime * -0.02;
+            dust.rotation.y = elapsedTime * 0.015;
+            dust.rotation.x = elapsedTime * 0.005;
+
+            const pulse = 1 + Math.sin(elapsedTime * 4) * 0.06;
+            heart.scale.set(pulse, pulse, pulse);
+            heart.rotation.y = Math.sin(elapsedTime * 0.5) * 0.1; 
+
+            orbiters.forEach(orbiter => {
+                orbiter.angle += orbiter.speed;
+                orbiter.obj.position.x = Math.cos(orbiter.angle) * orbiter.radius;
+                orbiter.obj.position.z = Math.sin(orbiter.angle) * orbiter.radius;
+                orbiter.obj.position.y = -9 + Math.sin(elapsedTime * orbiter.bobSpeed + orbiter.angle) * 1.5;
+            });
+
+            meteors.forEach(m => {
+                if(!m.active && Math.random() < 0.002 && phase === 'arrived') { 
+                    m.active = true; m.progress = 0;
+                    m.start.set(30 + Math.random()*20, 20 + Math.random()*15, -20 - Math.random()*20);
+                    m.end.set(-40 - Math.random()*20, -20 - Math.random()*15, 20 + Math.random()*20);
+                }
+                if(m.active) {
+                    m.progress += 0.03; 
+                    const currentPos = new THREE.Vector3().lerpVectors(m.start, m.end, m.progress);
+                    const tailPos = new THREE.Vector3().lerpVectors(m.start, m.end, Math.max(0, m.progress - 0.1)); 
+                    
+                    const posAttr = m.obj.geometry.attributes.position;
+                    posAttr.setXYZ(0, tailPos.x, tailPos.y, tailPos.z);
+                    posAttr.setXYZ(1, currentPos.x, currentPos.y, currentPos.z);
+                    posAttr.needsUpdate = true;
+
+                    if(m.progress >= 1.1) {
+                        m.active = false;
+                        posAttr.setXYZ(0,0,0,0); posAttr.setXYZ(1,0,0,0);
+                        posAttr.needsUpdate = true;
+                    }
+                }
+            });
+
+            // --- LOGIKA PERJALANAN (WARP EFFECT) ---
+            if (phase === 'warping') {
+                camera.position.z += (28 - camera.position.z) * 0.04;
+                camera.position.y += (3.5 - camera.position.y) * 0.04;
+
+                if (warpMat.opacity < 0.8) warpMat.opacity += 0.05;
+                warpSpeed += (12.0 - warpSpeed) * 0.05;
+
+                const pos = warpLines.geometry.attributes.position.array;
+                for(let i=0; i<warpCount; i++) {
+                    pos[i*6+2] += warpSpeed; 
+                    pos[i*6+5] += warpSpeed * 0.4; 
+                    
+                    if(pos[i*6+2] > camera.position.z) {
+                        const resetZ = camera.position.z - (400 + Math.random() * 200);
+                        pos[i*6+2] = resetZ;
+                        pos[i*6+5] = resetZ;
+                    }
+                }
+                warpLines.geometry.attributes.position.needsUpdate = true;
+
+                if (camera.position.z < 60) {
+                    phase = 'arriving';
+                    document.getElementById('main-text').style.opacity = '1';
+                }
+            } 
+            else if (phase === 'arriving' || phase === 'arrived') {
+                phase = 'arrived';
+                
+                camera.position.x += (0 - camera.position.x) * 0.02;
+                camera.position.y += (3.5 - camera.position.y) * 0.02;
+                camera.position.z += (28 - camera.position.z) * 0.02;
+
+                if (warpMat.opacity > 0) warpMat.opacity -= 0.02;
+
+                targetX = mouseX * 0.0015;
+                targetY = mouseY * 0.0015;
+                scene.rotation.y += (targetX - scene.rotation.y) * 0.05;
+                scene.rotation.x += (targetY - scene.rotation.x) * 0.05;
+            }
+
+            camera.lookAt(0, 1, 0);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // --- Logika Tombol Mulai ---
+        const bgm = document.getElementById('bgm');
+        const musicControl = document.getElementById('music-control');
+        let isPlaying = false;
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            const screen = document.getElementById('opening-screen');
+            screen.style.opacity = '0';
+            
+            bgm.play().then(() => {
+                isPlaying = true;
+                musicControl.style.display = 'block';
+            }).catch(err => console.log("Audio play blocked."));
+
+            phase = 'warping';
+
+            setTimeout(() => {
+                screen.style.visibility = 'hidden';
+            }, 1500); 
+        });
+
+        document.getElementById('env-icon').addEventListener('click', () => document.getElementById('startBtn').click());
+
+        musicControl.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            if(isPlaying) {
+                bgm.pause(); musicControl.innerText = '🎵 Music: OFF';
+            } else {
+                bgm.play(); musicControl.innerText = '🎵 Music: ON';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>
